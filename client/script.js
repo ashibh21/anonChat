@@ -3,28 +3,36 @@ const serverUrl = `${protocol}://${window.location.host}`;
 const socket = new WebSocket(serverUrl);
 
 socket.onopen = (event) => {
-  console.log("connected to ws server");
-  console.log("hi");
+  console.log("Connected to WebSocket server");
 };
 
 socket.onerror = (err) => {
-  console.log(err);
-};
-socket.onmessage = async function (event) {
-  console.log(event);
-  const text = await event.data.text();
-  const chatBox = document.getElementById("chat-box");
-  const newmsg = document.createElement("div");
-  newmsg.textContent = text;
-  chatBox.appendChild(newmsg);
+  console.error("WebSocket error:", err);
 };
 
-const button = document.getElementById("send");
-button.addEventListener("click", () => {
+socket.onmessage = function (event) {
+  const text = JSON.parse(event.data);
+  const chatBox = document.getElementById("chat-box");
+  const newMsg = document.createElement("div");
+  newMsg.textContent = `${text.clientId}: ${text.message}`;
+  chatBox.appendChild(newMsg);
+};
+
+const sendMessage = () => {
   const input = document.getElementById("input");
   const message = input.value.trim();
   if (message) {
     socket.send(message);
     input.value = "";
+  }
+};
+
+const button = document.getElementById("send");
+button.addEventListener("click", sendMessage);
+
+const inputField = document.getElementById("input");
+inputField.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    sendMessage();
   }
 });
