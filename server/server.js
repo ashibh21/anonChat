@@ -5,7 +5,7 @@ const PORT = 3000;
 const WebSocket = require("ws");
 const wss = new WebSocket.Server({ server: http });
 
-app.use(express.static("../client")); // Adjust the path to your client folder if needed
+app.use(express.static("../client")); 
 
 const connectedClients = [];
 
